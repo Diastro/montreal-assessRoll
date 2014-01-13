@@ -1,7 +1,7 @@
 import json
 import cookielib
 import requests
-import sys, getopt
+import sys
 import Queue
 import re
 import os
@@ -17,15 +17,15 @@ class req():
 
 	def streetLookup(self, streetName):
 		self.session.cookies.set_cookie(cookielib.Cookie(
-			version=0, 
-			name='nom_rue', 
+			version=0,
+			name='nom_rue',
 			value=streetName,
-			port=None, 
+			port=None,
 			port_specified=False,
-			domain="evalweb.ville.montreal.qc.ca", 
-			domain_specified=True, 
+			domain="evalweb.ville.montreal.qc.ca",
+			domain_specified=True,
 			domain_initial_dot=False,
-			path="/", 
+			path="/",
 			path_specified=True,
 			secure=False,
 			expires=None,
@@ -40,7 +40,7 @@ class req():
 		r = self.session.get(URL, data=payload)
 		content =  r.text.encode('utf-8').strip()
 
-		return content		
+		return content
 
 	def queryStreet(self, streetId):
 		URL = "http://evalweb.ville.montreal.qc.ca/Role2014actu/RechAdresse.ASP?IdAdrr=%20" + streetId
@@ -78,7 +78,7 @@ def main():
 
 	# get the street list (id, name)
 	for street in streets:
-		r = request.streetLookup(street)		
+		r = request.streetLookup(street)
 		soup = BeautifulSoup(r)
 		results = soup.findAll('option')
 
@@ -120,7 +120,7 @@ def main():
 		soup = BeautifulSoup(r)
 		soup.prettify()
 		results = soup.findAll('font')
-		
+
 		postal_addr = ''
 		value_int = 0
 		value_str = ''
@@ -158,7 +158,7 @@ def main():
 	sortedRoll = sorted(roll,key=itemgetter('value_int'), reverse=True)
 
 	# fianl data printing
-	f = open('assessement_roll_data.csv', 'w')
+	f = open('assessment_roll_data.csv', 'w')
 	print '\n\n' + "Sorted assessment roll : \n"
 	for r in sortedRoll:
 		output = r['postal_adress'] + "," + r['ownerA'] + "," + r['value_str']
