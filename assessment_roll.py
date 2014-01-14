@@ -38,14 +38,14 @@ class req():
 		payload = {'text1': streetName}
 		URL = "http://evalweb.ville.montreal.qc.ca/Role2014actu/recherche.asp"
 		r = self.session.get(URL, data=payload)
-		content =  r.text.encode('utf-8').strip()
+		content =  r.text
 
 		return content
 
 	def queryStreet(self, streetId):
 		URL = "http://evalweb.ville.montreal.qc.ca/Role2014actu/RechAdresse.ASP?IdAdrr=%20" + streetId
 		r = self.session.get(URL)
-		content =  r.text.encode('utf-8').strip()
+		content =  r.text
 
 		return content
 
@@ -127,17 +127,17 @@ def main():
 		ownerA = ''
 		for i, result in enumerate(results):
 			if "Adresse :" in result.text:
-				postal_addr = results[i+1].text.encode('utf-8')
+				postal_addr = results[i+1].text
 
 			if "Valeur imposable de l'immeuble :" in result.text:
 				try:
 					value_int = int(results[i+1].text.replace(" ", "").replace("$",""))
-					value_str = results[i+1].text.encode('utf-8')
+					value_str = results[i+1].text
 				except:
 					continue
 
 			if "Nom :" in result.text and ownerA == "":
-				ownerA = results[i+1].text.replace(",", " ").replace("  ", " ").encode('utf-8') # TODO : remove utf-8
+				ownerA = results[i+1].text.replace(",", " ").replace("  ", " ") # TODO : remove utf-8
 
 		# does the job, but needs review
 		sys.stdout.write('  \b')
@@ -157,16 +157,16 @@ def main():
 
 	sortedRoll = sorted(roll,key=itemgetter('value_int'), reverse=True)
 
-	# fianl data printing
+	# final data printing
 	f = open('assessment_roll_data.csv', 'w')
 	print '\n\n' + "Sorted assessment roll : \n"
 	for r in sortedRoll:
-		output = r['postal_adress'] + "," + r['ownerA'] + "," + r['value_str']
-		f.write(output + '\n')
-		print output
+		output = r['postal_adress'].replace(",","") + "," + r['ownerA'].replace(",","") + "," + r['value_str'].replace(",","")
+		f.write(output.encode('ascii','ignore') + '\n')
+		print output.encode('ascii','ignore')
 	print '\n'
 
-	print 'Data successfuly written to assessement_roll_data.csv\n'
+	print 'Data successfuly written to assessment_roll_data.csv\n'
 
 
 if __name__ == "__main__":
